@@ -10,7 +10,9 @@
 
 'use strict';
 
-import Pressability from '../../Pressability/Pressability.js';
+import Pressability, {
+  type PressabilityConfig,
+} from '../../Pressability/Pressability.js';
 import {PressabilityDebugView} from '../../Pressability/PressabilityDebug.js';
 import TVTouchable from './TVTouchable.js';
 import type {
@@ -24,6 +26,7 @@ import type {EdgeInsetsProp} from '../../StyleSheet/EdgeInsetsPropType';
 import type {
   BlurEvent,
   FocusEvent,
+  KeyEvent,
   LayoutEvent,
   PressEvent,
   MouseEvent, // TODO(macOS ISS#2323203)
@@ -62,6 +65,10 @@ type Props = $ReadOnly<{|
   onAccessibilityAction?: ?(event: AccessibilityActionEvent) => mixed,
   onBlur?: ?(event: BlurEvent) => mixed,
   onFocus?: ?(event: FocusEvent) => mixed,
+  onKeyDown?: ?(event: KeyEvent) => mixed,
+  onKeyUp?: ?(event: KeyEvent) => mixed,
+  validKeysDown?: ?Array<string>,
+  validKeysUp?: ?Array<string>,
   onLayout?: ?(event: LayoutEvent) => mixed,
   onLongPress?: ?(event: PressEvent) => mixed,
   onPress?: ?(event: PressEvent) => mixed,
@@ -103,6 +110,10 @@ const PASSTHROUGH_PROPS = [
   'onAccessibilityAction',
   'onBlur',
   'onFocus',
+  'onKeyDown',
+  'onKeyUp',
+  'validKeysDown',
+  'validKeysUp',
   'onLayout',
   'onMouseEnter', // [TODO(macOS ISS#2323203)
   'onMouseLeave',
@@ -240,6 +251,53 @@ class TouchableWithoutFeedback extends React.Component<Props, State> {
     }
     this.state.pressability.reset();
   }
+}
+
+function createPressabilityConfig(props: Props): PressabilityConfig {
+  return {
+    onBlur: event => {
+      if (props.onBlur) {
+        props.onBlur(event);
+      }
+    },
+    onFocus: event => {
+      if (props.onFocus) {
+        props.onFocus(event);
+      }
+    },
+    onKeyDown: event => {
+      if (props.onKeyDown) {
+        props.onKeyDown(event);
+      }
+    },
+    onKeyUp: event => {
+      if (props.onKeyUp) {
+        props.onKeyUp(event);
+      }
+    },
+    validKeysDown: props.validKeysDown,
+    validKeysUp: props.validKeysUp,
+    onLongPress: event => {
+      if (props.onLongPress) {
+        props.onLongPress(event);
+      }
+    },
+    onPress: event => {
+      if (props.onPress) {
+        props.onPress(event);
+      }
+    },
+    onPressIn: event => {
+      if (props.onPressIn) {
+        props.onPressIn(event);
+      }
+    },
+    onPressOut: event => {
+      if (props.onPressOut) {
+        props.onPressOut(event);
+      }
+    },
+  };
 }
 
 module.exports = TouchableWithoutFeedback;
