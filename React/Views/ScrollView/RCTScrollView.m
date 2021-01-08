@@ -396,6 +396,14 @@
 #endif
 #pragma clang diagnostic pop // TODO(OSS Candidate ISS#2710739)
 
+#if TARGET_OS_OSX
+    if ([_scrollView respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]) {
+        if (@available(macOS 10.10, *)) {
+            _scrollView.automaticallyAdjustsContentInsets = NO;
+        }
+    }
+#endif
+
     _automaticallyAdjustContentInsets = YES;
     _DEPRECATED_sendUpdatedChildFrames = NO;
     _contentInset = UIEdgeInsetsZero;
